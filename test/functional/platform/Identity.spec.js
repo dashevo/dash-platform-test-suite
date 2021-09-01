@@ -253,6 +253,7 @@ describe('Platform', () => {
       let chainLockIdentity;
 
       it('should create identity using chainLock', async () => {
+        console.log('SHOULD CREATE STARTS');
         const {
           transaction,
           privateKey,
@@ -260,9 +261,19 @@ describe('Platform', () => {
         } = await createAssetLockTransaction({
           client,
         }, 1);
+        console.log('=====');
+        console.log({ chainLockIdentity });
+        console.log({ transaction });
+        console.log({ privateKey });
+        console.log({ outputIndex });
 
+        console.log('===>');
+        console.log('tx', transaction);
+        console.log('txToBuffer', transaction.toBuffer);
+        console.log('txToBuffer()', transaction.toBuffer());
         // Broadcast Asset Lock transaction
         await client.getDAPIClient().core.broadcastTransaction(transaction.toBuffer());
+        console.log('broadcasted');
         await waitForBlocks(client.getDAPIClient(), 1);
 
         const { chain } = await client.getDAPIClient().core.getStatus();
@@ -290,12 +301,14 @@ describe('Platform', () => {
         const identityCreateTransitionData = await createIdentityCreateTransition(
           client.platform, assetLockProof, privateKey,
         );
+        console.dir({ identityCreateTransitionData }, { depth: null });
 
         const {
           identityCreateTransition,
         } = identityCreateTransitionData;
 
         ({ identity: chainLockIdentity } = identityCreateTransitionData);
+        console.dir({ chainLockIdentity }, { depth: null });
 
         await client.platform.broadcastStateTransition(
           identityCreateTransition,
